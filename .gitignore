@@ -1,0 +1,15 @@
+/backend/media/
+/backend/.venv/
+/backend/db.sqlite3
+/backend/**/__pycache__/
+/backend/**/*.pyc
+/backend/**/*.pyo
+/backend/**/*.pyd
+/backend/**/*.pyo
+/backend/**/*.pyd
+
+/frontend/node_modules/
+/frontend/dist/
+/frontend/package-lock.json
+/frontend/.vscode/
+
