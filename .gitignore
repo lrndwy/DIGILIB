@@ -7,9 +7,13 @@
 /backend/**/*.pyd
 /backend/**/*.pyo
 /backend/**/*.pyd
+/backend/.env
 
 /frontend/node_modules/
 /frontend/dist/
 /frontend/package-lock.json
 /frontend/.vscode/
+/frontend/.env
+.DS_Store
+
 
