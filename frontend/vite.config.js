@@ -22,11 +22,20 @@ export default defineConfig({
       compress: {
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.error', 'console.warn', 'console.info', 'console.debug']
+        pure_funcs: ['console.log', 'console.warn', 'console.error', 'console.info', 'console.debug']
       },
       format: {
         comments: false
+      },
+      mangle: true
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
       }
     }
+  },
+  esbuild: {
+    drop: ['console', 'debugger']
   }
 })

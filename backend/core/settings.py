@@ -195,3 +195,23 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 FILE_UPLOAD_TYPES = None
 
 ACCESS_CONTROL_ALLOW_ORIGIN = '*'
+
+# Tambahkan konfigurasi logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'handlers': {
+        'null': {
+            'class': 'logging.NullHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
+    }
+}
+
+# Matikan debug di production
+

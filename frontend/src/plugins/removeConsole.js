@@ -1,12 +1,17 @@
 export default {
   install(app) {
     if (import.meta.env.PROD) {
-      const noop = () => {}
-      window.console.log = noop
-      window.console.error = noop
-      window.console.warn = noop
-      window.console.info = noop
-      window.console.debug = noop
+      ['log', 'error', 'warn', 'info', 'debug'].forEach((method) => {
+        console[method] = () => {}
+      })
+      
+      window.console = {
+        log: () => {},
+        error: () => {},
+        warn: () => {},
+        info: () => {},
+        debug: () => {}
+      }
     }
   }
 } 
