@@ -2,8 +2,21 @@ import axios from 'axios'
 import { useStore } from 'vuex'
 import router from '@/router'
 
+// Nonaktifkan logging di production
+if (import.meta.env.PROD) {
+  axios.defaults.headers.common['X-Requested-With'] = null
+}
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL + '/api',
+  withCredentials: true,
+  // Nonaktifkan logging di production
+  ...(import.meta.env.PROD && {
+    headers: {
+      'X-Requested-With': null
+    },
+    silent: true
+  })
 })
 
 api.interceptors.request.use(
