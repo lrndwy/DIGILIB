@@ -21,6 +21,7 @@ DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
 
 # CORS
 CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+CSRF_TRUSTED_ORIGINS=http://localhost:5173,http://localhost:3000
 
 # JWT Settings
 JWT_ACCESS_TOKEN_LIFETIME=1

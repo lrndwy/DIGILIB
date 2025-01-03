@@ -3,8 +3,12 @@ import { useStore } from 'vuex'
 import router from '@/router'
 
 const api = axios.create({
-  baseURL: window.location.protocol + '//' + import.meta.env.VITE_API_URL + '/api',
-  withCredentials: true
+  baseURL: 'http://' + import.meta.env.VITE_API_URL + '/api',
+  withCredentials: false,
+  headers: {
+    'Accept': 'application/json',
+    'Access-Control-Allow-Origin': '*'
+  }
 })
 
 api.interceptors.request.use(
