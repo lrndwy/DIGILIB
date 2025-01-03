@@ -136,9 +136,19 @@
       <FwbButton 
         type="submit"
         color="dark"
+        :disabled="isLoading"
         class="w-fit flex items-center gap-2 px-4 py-2 bg-background-dark dark:bg-background-light text-white dark:text-black hover:bg-surface-dark dark:hover:bg-surface-light"
       >
-        {{ user ? 'Update' : 'Simpan' }}
+        <template v-if="isLoading">
+          <svg class="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+          </svg>
+          Memproses...
+        </template>
+        <template v-else>
+          {{ user ? 'Update' : 'Simpan' }}
+        </template>
       </FwbButton>
     </div>
   </form>
@@ -158,6 +168,7 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'cancel', 'error'])
 const changePassword = ref(false)
+const isLoading = ref(false)
 
 const formData = ref({
   username: '',
@@ -180,7 +191,7 @@ onMounted(() => {
   }
 })
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   // Validasi form
   if (!formData.value.username || !formData.value.email) {
     emit('error', {
@@ -200,25 +211,31 @@ const handleSubmit = () => {
     return
   }
 
-  const submitData = {
-    username: formData.value.username,
-    email: formData.value.email,
-    role: formData.value.role,
-    is_active: formData.value.is_active === 'true',
-    address: formData.value.address || '',
-    tanggal_lahir: formData.value.tanggal_lahir || null
+  isLoading.value = true
+
+  try {
+    const submitData = {
+      username: formData.value.username,
+      email: formData.value.email,
+      role: formData.value.role,
+      is_active: formData.value.is_active === 'true',
+      address: formData.value.address || '',
+      tanggal_lahir: formData.value.tanggal_lahir || null
+    }
+    
+    if (!props.user || (props.user && changePassword.value)) {
+      submitData.password = formData.value.password
+    }
+    
+    if (submitData.tanggal_lahir) {
+      submitData.tanggal_lahir = new Date(submitData.tanggal_lahir)
+        .toISOString()
+        .split('T')[0]
+    }
+    
+    emit('submit', submitData)
+  } finally {
+    isLoading.value = false
   }
-  
-  if (!props.user || (props.user && changePassword.value)) {
-    submitData.password = formData.value.password
-  }
-  
-  if (submitData.tanggal_lahir) {
-    submitData.tanggal_lahir = new Date(submitData.tanggal_lahir)
-      .toISOString()
-      .split('T')[0]
-  }
-  
-  emit('submit', submitData)
 }
 </script>

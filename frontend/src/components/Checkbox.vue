@@ -45,12 +45,12 @@ const props = defineProps({
     default: ''
   },
   trueValue: {
-    type: String,
-    default: 'aktif'
+    type: [String, Boolean],
+    default: true
   },
   falseValue: {
-    type: String,
-    default: 'tidak_aktif'
+    type: [String, Boolean],
+    default: false
   }
 })
 
@@ -79,8 +79,10 @@ const handleChange = (event) => {
       }
     }
     emit('update:modelValue', newValue)
-  } else {
+  } else if (props.trueValue !== undefined && props.falseValue !== undefined) {
     emit('update:modelValue', checked ? props.trueValue : props.falseValue)
+  } else {
+    emit('update:modelValue', checked)
   }
 }
 </script>

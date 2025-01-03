@@ -218,7 +218,6 @@ const fetchStats = async () => {
   try {
     const response = await api.get('/dashboard/stats/')
     stats.value = response.data
-    console.log(stats.value)
   } catch (error) {
     if (error.response?.status === 401) {
       store.dispatch('logout')

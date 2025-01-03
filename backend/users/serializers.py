@@ -58,6 +58,7 @@ class GuruSerializer(serializers.ModelSerializer):
     jenjang_detail = serializers.SerializerMethodField()
     sekolah_detail = serializers.SerializerMethodField()
     
+    
     class Meta:
         model = guru
         fields = '__all__'
@@ -107,6 +108,12 @@ class GuruSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'user': 'User ini sudah terdaftar sebagai guru'})
         
         return data
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['crud_buku'] = instance.crud_buku
+        representation['crud_materi'] = instance.crud_materi
+        return representation
 
 class SiswaSerializer(serializers.ModelSerializer):
     user_detail = UserSerializer(source='user', read_only=True)

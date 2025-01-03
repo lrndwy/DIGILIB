@@ -163,6 +163,9 @@
                       Sekolah
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider">
+                      Akses CRUD
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-text-light-secondary dark:text-text-dark-secondary uppercase tracking-wider">
                       Aksi
                     </th>
                   </tr>
@@ -212,7 +215,40 @@
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap">{{ guru.jenjang_detail?.nama_jenjang || '-' }}</td>
                       <td class="px-6 py-4 whitespace-nowrap">{{ guru.sekolah_detail?.nama_sekolah || '-' }}</td>
-                      <td class="px-6 py-4 whitespace-nowrap flex space-x-2">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col gap-2">
+                          <!-- Badge untuk CRUD Buku -->
+                          <div class="inline-flex items-center">
+                            <span class="text-xs font-medium mr-2">Buku:</span>
+                            <span 
+                              :class="[
+                                'px-2 py-1 text-xs font-medium rounded-full',
+                                guru.crud_buku 
+                                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
+                                  : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                              ]"
+                            >
+                              {{ guru.crud_buku ? 'Diizinkan' : 'Tidak Diizinkan' }}
+                            </span>
+                          </div>
+
+                          <!-- Badge untuk CRUD Materi -->
+                          <div class="inline-flex items-center">
+                            <span class="text-xs font-medium mr-2">Materi:</span>
+                            <span 
+                              :class="[
+                                'px-2 py-1 text-xs font-medium rounded-full',
+                                guru.crud_materi 
+                                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
+                                  : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                              ]"
+                            >
+                              {{ guru.crud_materi ? 'Diizinkan' : 'Tidak Diizinkan' }}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap flex items-center justify-start space-x-2">
                         <fwb-tooltip>
                           <template #trigger>
                             <FwbButton
@@ -392,6 +428,42 @@
                 <div class="w-full flex">
                   <div class="w-1/2 font-medium">Sekolah:</div>
                   <div class="w-1/2 break-words">{{ selectedGuruDetail.sekolah_detail?.nama_sekolah || '-' }}</div>
+                </div>
+                <div class="w-full flex">
+                  <div class="w-1/2 font-medium">Akses CRUD:</div>
+                  <div class="w-1/2 break-words">
+                    <div class="flex flex-col gap-2">
+                      <!-- Badge untuk CRUD Buku -->
+                      <div class="inline-flex items-center">
+                        <span class="text-xs font-medium mr-2">Buku:</span>
+                        <span 
+                          :class="[
+                            'px-2 py-1 text-xs font-medium rounded-full',
+                            selectedGuruDetail.crud_buku 
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
+                              : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                          ]"
+                        >
+                          {{ selectedGuruDetail.crud_buku ? 'Diizinkan' : 'Tidak Diizinkan' }}
+                        </span>
+                      </div>
+
+                      <!-- Badge untuk CRUD Materi -->
+                      <div class="inline-flex items-center">
+                        <span class="text-xs font-medium mr-2">Materi:</span>
+                        <span 
+                          :class="[
+                            'px-2 py-1 text-xs font-medium rounded-full',
+                            selectedGuruDetail.crud_materi 
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
+                              : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                          ]"
+                        >
+                          {{ selectedGuruDetail.crud_materi ? 'Diizinkan' : 'Tidak Diizinkan' }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

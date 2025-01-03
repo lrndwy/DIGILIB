@@ -213,6 +213,7 @@
       <template v-if="userRole === 'guru'">
         <!-- Tambahkan menu Buku -->
         <router-link 
+          v-if="userData?.crud_buku"
           to="/dashboard/guru/buku"
           :class="[
             $route.path === '/dashboard/guru/buku'
@@ -231,11 +232,12 @@
             ]"
             aria-hidden="true"
           />
-          Manajemen Buku
+          Buku
         </router-link>
 
         <!-- Tambahkan menu Materi -->
         <router-link 
+          v-if="userData?.crud_materi"
           to="/dashboard/guru/materi"
           :class="[
             $route.path === '/dashboard/guru/materi'
@@ -288,7 +290,19 @@
 
     <div class="p-6 mb-4">
       <!-- Logo sekolah -->
-      <div class="flex flex-col items-center mb-10" v-if="userRole === 'guru' || userRole === 'siswa'">
+      <div class="flex flex-col items-center mb-10" v-if="userRole === 'siswa'">
+        <img
+          v-if="userData.sekolah_detail?.logo"
+          :src="getFullLogoUrl"
+          :alt="userData.sekolah_detail?.nama_sekolah"
+          class="w-full h-12 object-contain"
+          @error="e => e.target.src = '/school-logo-default.png'"
+        />
+        <div class="flex flex-col mt-3">
+          <span class="text-text-light-secondary dark:text-text-dark-secondary">{{ userData.sekolah_detail?.nama_sekolah }}</span>
+        </div>
+      </div>
+      <div class="flex flex-col items-center mb-10" v-if="userRole === 'guru'">
         <img
           v-if="userData.sekolah_detail?.logo"
           :src="getFullLogoUrl"
@@ -666,7 +680,7 @@ watch(() => props.isOpen, (newValue) => {
 })
 
 const getFullLogoUrl = computed(() => {
-  if (!userData.value?.sekolah_detail?.logo) return '/school-logo-default.png'
+  if (!userData.value?.sekolah_detail?.logo) return ''
   
   // Jika URL sudah lengkap (dimulai dengan http atau https), gunakan langsung
   if (userData.value.sekolah_detail.logo.startsWith('http')) {

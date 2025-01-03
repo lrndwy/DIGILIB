@@ -96,32 +96,12 @@ class GuruViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-            # Validasi data yang diterima
-            data = request.data
-            required_fields = ['user', 'nama_guru', 'nama_mata_pelajaran', 'kelas', 'jenjang', 'sekolah']
+            data = request.data.copy()
             
-            for field in required_fields:
-                if not data.get(field):
-                    return Response(
-                        {'error': f'Field {field} harus diisi'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
+            # Konversi string ke boolean
+            data['crud_buku'] = data.get('crud_buku') in [True, 'true', 'True', '1']
+            data['crud_materi'] = data.get('crud_materi') in [True, 'true', 'True', '1']
             
-            # Validasi user
-            try:
-                user = User.objects.get(id=data['user'])
-                if user.role != 'guru':
-                    return Response(
-                        {'error': 'User harus memiliki role guru'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-            except User.DoesNotExist:
-                return Response(
-                    {'error': 'User tidak ditemukan'},
-                    status=status.HTTP_404_NOT_FOUND
-                )
-
-            # Buat instance guru
             serializer = self.get_serializer(data=data)
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
@@ -129,7 +109,6 @@ class GuruViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
             
         except Exception as e:
-            print(f"Error creating guru: {str(e)}")  # Tambahkan logging
             return Response(
                 {'error': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -245,7 +224,7 @@ class SiswaViewSet(LogActivityMixin, viewsets.ModelViewSet):
                 'materi': MateriSerializer(materi_list, many=True).data,
                 'siswa': {
                     'nama_siswa': siswa_data.nama_siswa,
-                    'foto_profil_url': user.foto_profil.url,
+                    'foto_profil_url': user.foto_profil.url if user.foto_profil else None,
                     'kelas': {
                         'id': siswa_data.kelas.id,
                         'nama_kelas': siswa_data.kelas.nama_kelas
@@ -256,7 +235,8 @@ class SiswaViewSet(LogActivityMixin, viewsets.ModelViewSet):
                     },
                     'sekolah': {
                         'id': siswa_data.sekolah.id,
-                        'nama_sekolah': siswa_data.sekolah.nama_sekolah
+                        'nama_sekolah': siswa_data.sekolah.nama_sekolah,
+                        'logo': siswa_data.sekolah.logo_sekolah.url if siswa_data.sekolah.logo_sekolah else None
                     } if siswa_data.sekolah else None
                 }
             })
@@ -381,7 +361,9 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
                         'id': guru_instance.sekolah.id,
                         'nama_sekolah': guru_instance.sekolah.nama_sekolah,
                         'logo': guru_instance.sekolah.logo_sekolah.url if guru_instance.sekolah.logo_sekolah else None
-                    }
+                    },
+                    'crud_buku': guru_instance.crud_buku,
+                    'crud_materi': guru_instance.crud_materi
                 })
             except guru.DoesNotExist:
                 pass
@@ -398,7 +380,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
                         'id': siswa_instance.jenjang.id,
                         'nama_jenjang': siswa_instance.jenjang.nama_jenjang
                     },
-                    'sekolah': {
+                    'sekolah_detail': {
                         'id': siswa_instance.sekolah.id,
                         'nama_sekolah': siswa_instance.sekolah.nama_sekolah,
                         'logo': siswa_instance.sekolah.logo_sekolah.url if siswa_instance.sekolah.logo_sekolah else None

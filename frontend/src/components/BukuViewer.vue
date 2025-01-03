@@ -1,7 +1,7 @@
 <template>
   <TransitionWrapper>
     <div 
-      class="fixed inset-0 flex flex-col bg-gradient-to-br from-gray-900 to-gray-800 z-50"
+      class="viewer-container"
       @contextmenu.prevent
     >
       <!-- Toolbar -->
@@ -22,8 +22,8 @@
         </div>
       </div>
 
-      <!-- PDF Viewer -->
-      <div class="w-full h-full">
+      <!-- PDF Viewer container -->
+      <div class="viewer-content">
         <VPdfViewer 
           v-if="pdfUrl" 
           :src="pdfUrl"
@@ -52,8 +52,8 @@ const route = useRoute()
 const pdfUrl = ref(null)
 const error = ref(null)
 
+// Tambahkan license seperti komponen lain
 useLicense('8ac115b7-b578-4a6b-af83-84c687aa2daf')
-
 
 // Fungsi untuk mengambil PDF
 const fetchPdfUrl = async () => {
@@ -95,3 +95,40 @@ onUnmounted(() => {
   document.removeEventListener('contextmenu', (e) => e.preventDefault())
 })
 </script>
+
+<style scoped>
+.viewer-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #2d3748;
+  z-index: 9999;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewer-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Mencegah highlight text */
+::selection {
+  background: transparent;
+  color: inherit;
+}
+
+::-moz-selection {
+  background: transparent;
+  color: inherit;
+}
+</style>

@@ -24,6 +24,8 @@ class guru(models.Model):
     kelas = models.ManyToManyField('atribut.kelas')
     jenjang = models.ForeignKey('atribut.jenjang', on_delete=models.SET_NULL, null=True)
     sekolah = models.ForeignKey('atribut.sekolah', on_delete=models.SET_NULL, null=True)
+    crud_buku = models.BooleanField(default=False) # Baru
+    crud_materi = models.BooleanField(default=False) # Baru
     
     class Meta:
         db_table = 'guru'

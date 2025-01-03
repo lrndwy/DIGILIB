@@ -288,7 +288,10 @@ const filteredMateri = computed(() => {
 })
 
 const fullProfileUrl = computed(() => {
-  if (!dashboardData.value?.siswa?.foto_profil_url) return '/user-profile.jpg'
+  // Jika tidak ada foto profil, gunakan default
+  if (!dashboardData.value?.siswa?.foto_profil_url) {
+    return '/user-profile.jpg'
+  }
   
   // Jika URL sudah lengkap (dimulai dengan http atau https), gunakan langsung
   if (dashboardData.value.siswa.foto_profil_url.startsWith('http')) {
@@ -296,7 +299,7 @@ const fullProfileUrl = computed(() => {
   }
   
   // Jika URL relatif, tambahkan baseURL
-  return import.meta.env.VITE_API_URL + dashboardData.value.siswa.foto_profil_url
+  return `${import.meta.env.VITE_API_URL}${dashboardData.value.siswa.foto_profil_url}`
 })
 
 const fetchDashboardData = async () => {
@@ -304,9 +307,7 @@ const fetchDashboardData = async () => {
     const response = await api.get('/siswa/dashboard_statistics/')
     if (response.data?.siswa) {
       dashboardData.value = response.data
-      console.log('Data siswa:', response.data.siswa)
     }
-    console.log('Dashboard data:', dashboardData.value)
   } catch (error) {
     console.error('Error fetching dashboard data:', error)
     notify({

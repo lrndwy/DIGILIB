@@ -230,11 +230,6 @@
                     <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
                       {{ perangkat.mata_pelajaran_detail?.nama_mata_pelajaran }}
                     </p>
-                    <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                      <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">
-                        Dibuat: {{ new Date(perangkat.created_at).toLocaleDateString() }}
-                      </p>
-                    </div>
                   </div>
                 </div>
               </SwiperSlide>
@@ -279,6 +274,9 @@ const userInfo = computed(() => {
 const fullProfileUrl = computed(() => {
   // Cek dari response dashboard terlebih dahulu
   if (statistics.value?.guru_profile) {
+    if (!statistics.value.guru_profile || statistics.value.guru_profile === 'null' || statistics.value.guru_profile === '') {
+      return '/user-profile.jpg'
+    }
     if (statistics.value.guru_profile.startsWith('http')) {
       return statistics.value.guru_profile
     }
@@ -287,6 +285,9 @@ const fullProfileUrl = computed(() => {
   
   // Fallback ke user info jika tidak ada di response dashboard
   if (userInfo.value?.guru_profile) {
+    if (!userInfo.value.guru_profile || userInfo.value.guru_profile === 'null' || userInfo.value.guru_profile === '') {
+      return '/user-profile.jpg'
+    }
     if (userInfo.value.guru_profile.startsWith('http')) {
       return userInfo.value.guru_profile
     }

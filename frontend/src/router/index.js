@@ -9,6 +9,39 @@ import AdminDashboard_Siswa from '@/views/dashboard/admin/Siswa.vue'
 import Profile from '@/views/profile/Profile.vue'
 import AdminDashboard_Materi from '@/views/dashboard/admin/Materi.vue'
 import LandingPage from '@/views/LandingPage.vue'
+import api from '@/config/api'
+
+// Tambahkan fungsi untuk mengecek akses CRUD
+const checkGuruAccess = async (to, from, next) => {
+  const userRole = localStorage.getItem('userRole')
+
+  if (userRole !== 'guru') {
+    next('/dashboard/' + userRole)
+    return
+  }
+
+  try {
+    const response = await api.get('/user/profile/')
+    const userData = response.data
+
+    // Cek akses untuk rute buku
+    if (to.path === '/dashboard/guru/buku' && !userData.crud_buku) {
+      next('/dashboard/guru')
+      return
+    }
+
+    // Cek akses untuk rute materi/perangkat
+    if ((to.path === '/dashboard/guru/materi' || to.path === '/dashboard/guru/perangkat-kurikulum') && !userData.crud_materi) {
+      next('/dashboard/guru')
+      return
+    }
+
+    next()
+  } catch (error) {
+    console.error('Error checking guru access:', error)
+    next('/dashboard/guru')
+  }
+}
 
 const routes = [
   {
@@ -43,7 +76,8 @@ const routes = [
     path: '/dashboard/guru/buku',
     name: 'GuruDashboard_Buku',
     component: () => import('@/views/dashboard/guru/BukuGuru.vue'),
-    meta: { requiresAuth: true, role: 'guru' }
+    meta: { requiresAuth: true, role: 'guru' },
+    beforeEnter: checkGuruAccess
   },
   {
     path: '/dashboard/siswa',
@@ -119,8 +153,9 @@ const routes = [
     component: () => import('@/views/dashboard/guru/MateriGuru.vue'),
     meta: {
       requiresAuth: true,
-      allowedRoles: ['guru']
-    }
+      role: 'guru'
+    },
+    beforeEnter: checkGuruAccess
   },
   {
     path: '/dashboard/guru/perangkat-kurikulum',
@@ -128,8 +163,9 @@ const routes = [
     component: () => import('@/views/dashboard/guru/PerangkatKurikulumGuru.vue'),
     meta: {
       requiresAuth: true,
-      allowedRoles: ['guru']
-    }
+      role: 'guru'
+    },
+    beforeEnter: checkGuruAccess
   }
 ]
 

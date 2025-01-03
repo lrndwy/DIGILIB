@@ -121,6 +121,34 @@
       </div>
     </div>
 
+    <!-- CRUD Buku -->
+    <div class="w-full flex gap-6">
+      <div class="flex-1">
+        <label class="flex items-center space-x-2">
+          <Checkbox
+            v-model="formData.crud_buku"
+            :true-value="true"
+            :false-value="false"
+          >
+            Izinkan CRUD Buku
+          </Checkbox>
+        </label>
+      </div>
+
+      <!-- CRUD Materi -->
+      <div class="flex-1">
+        <label class="flex items-center space-x-2">
+          <Checkbox
+            v-model="formData.crud_materi"
+            :true-value="true"
+            :false-value="false"
+          >
+            Izinkan CRUD Materi
+          </Checkbox>
+        </label>
+      </div>
+    </div>
+
     <!-- Action Buttons -->
     <div class="flex flex-row justify-end space-x-2 pt-6 border-t border-border-light dark:border-border-dark">
       <FwbButton 
@@ -134,9 +162,19 @@
       <FwbButton 
         type="submit"
         color="dark"
+        :disabled="isLoading"
         class="w-fit flex items-center gap-2 px-4 py-2 bg-background-dark dark:bg-background-light text-white dark:text-black hover:bg-surface-dark dark:hover:bg-surface-light"
       >
-        {{ guru ? 'Update' : 'Simpan' }}
+        <template v-if="isLoading">
+          <svg class="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+          </svg>
+          Memproses...
+        </template>
+        <template v-else>
+          {{ guru ? 'Update' : 'Simpan' }}
+        </template>
       </FwbButton>
     </div>
   </form>
@@ -179,7 +217,9 @@ const formData = ref({
   nama_mata_pelajaran: '',
   kelas: [],
   jenjang: '',
-  sekolah: ''
+  sekolah: '',
+  crud_buku: false,
+  crud_materi: false
 })
 
 const filteredKelasOptions = computed(() => {
@@ -251,9 +291,11 @@ const fetchData = async () => {
         user: props.guru.user,
         nama_guru: props.guru.nama_guru,
         nama_mata_pelajaran: props.guru.nama_mata_pelajaran,
-        kelas: props.guru.kelas_detail.map(k => k.id), // Simpan ID kelas yang sedang digunakan
+        kelas: props.guru.kelas_detail.map(k => k.id),
         jenjang: props.guru.jenjang,
-        sekolah: props.guru.sekolah
+        sekolah: props.guru.sekolah,
+        crud_buku: props.guru.crud_buku,
+        crud_materi: props.guru.crud_materi
       }
       
       // Set kelasList dengan data kelas yang sedang digunakan
@@ -298,7 +340,9 @@ const resetErrors = () => {
   }
 }
 
-const handleSubmit = () => {
+const isLoading = ref(false)
+
+const handleSubmit = async () => {
   resetErrors()
   let hasError = false
 
@@ -335,8 +379,13 @@ const handleSubmit = () => {
   if (hasError) {
     return
   }
-  
-  emit('submit', formData.value)
+
+  isLoading.value = true
+  try {
+    emit('submit', formData.value)
+  } finally {
+    isLoading.value = false
+  }
 }
 
 // Tambahkan watch untuk setiap field
