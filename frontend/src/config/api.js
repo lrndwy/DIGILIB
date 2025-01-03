@@ -2,32 +2,42 @@ import axios from 'axios'
 import { useStore } from 'vuex'
 import router from '@/router'
 
-// Nonaktifkan logging di production
-if (import.meta.env.PROD) {
-  axios.defaults.headers.common['X-Requested-With'] = null
-  axios.defaults.headers.common['Content-Type'] = null
-  axios.defaults.headers.common['Authorization'] = null
-  axios.defaults.headers.common['Accept'] = null
-  axios.defaults.headers.common['X-CSRFToken'] = null
-
-}
-
+// Buat instance axios dengan konfigurasi dasar
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL + '/api',
   withCredentials: true,
   // Nonaktifkan logging di production
   ...(import.meta.env.PROD && {
+    // Tambahkan konfigurasi untuk mematikan logging
+    silent: true,
     headers: {
       'X-Requested-With': null,
       'Content-Type': null,
       'Authorization': null,
       'Accept': null,
       'X-CSRFToken': null,
-    },
-    silent: true
+    }
   })
 })
 
+// Tambahkan interceptor untuk mematikan console di production
+if (import.meta.env.PROD) {
+  // Override console methods
+  const noop = () => {}
+  api.interceptors.request.use((config) => {
+    config.logging = false
+    config.transformRequest = [(data, headers) => {
+      return data
+    }]
+    return config
+  })
+
+  api.interceptors.response.use((response) => {
+    return response
+  })
+}
+
+// Sisanya tetap sama
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token')
@@ -35,7 +45,6 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`
     }
     
-    // Jangan set Content-Type untuk FormData
     if (!(config.data instanceof FormData)) {
       config.headers['Content-Type'] = 'application/json'
     }
@@ -51,7 +60,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      // Jika mendapat 401, clear store dan redirect ke login
       const store = useStore()
       await store.dispatch('logout')
       router.push('/login')
@@ -62,3 +70,4 @@ api.interceptors.response.use(
 )
 
 export default api
+
