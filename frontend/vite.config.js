@@ -21,7 +21,11 @@ export default defineConfig({
     terserOptions: {
       compress: {
         drop_console: true,
-        drop_debugger: true
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.error', 'console.warn', 'console.info', 'console.debug']
+      },
+      format: {
+        comments: false
       }
     }
   }

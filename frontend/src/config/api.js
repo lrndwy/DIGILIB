@@ -22,13 +22,16 @@ const api = axios.create({
 
 // Tambahkan interceptor untuk mematikan console di production
 if (import.meta.env.PROD) {
-  // Override console methods
   const noop = () => {}
+  console.log = noop
+  console.error = noop
+  console.warn = noop
+  console.info = noop
+  console.debug = noop
+  
   api.interceptors.request.use((config) => {
     config.logging = false
-    config.transformRequest = [(data, headers) => {
-      return data
-    }]
+    config.silent = true
     return config
   })
 
