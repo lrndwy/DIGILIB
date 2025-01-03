@@ -4,7 +4,7 @@ import router from '@/router'
 
 // Buat instance axios dengan konfigurasi dasar
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL.replace('http://', 'https://') + '/api',
+  baseURL: import.meta.env.VITE_API_URL + '/api',
   withCredentials: true,
   // Nonaktifkan logging di production
   ...(import.meta.env.PROD && {
