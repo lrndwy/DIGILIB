@@ -5,6 +5,11 @@ import router from '@/router'
 // Nonaktifkan logging di production
 if (import.meta.env.PROD) {
   axios.defaults.headers.common['X-Requested-With'] = null
+  axios.defaults.headers.common['Content-Type'] = null
+  axios.defaults.headers.common['Authorization'] = null
+  axios.defaults.headers.common['Accept'] = null
+  axios.defaults.headers.common['X-CSRFToken'] = null
+
 }
 
 const api = axios.create({
@@ -13,7 +18,11 @@ const api = axios.create({
   // Nonaktifkan logging di production
   ...(import.meta.env.PROD && {
     headers: {
-      'X-Requested-With': null
+      'X-Requested-With': null,
+      'Content-Type': null,
+      'Authorization': null,
+      'Accept': null,
+      'X-CSRFToken': null,
     },
     silent: true
   })
