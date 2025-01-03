@@ -4,6 +4,7 @@
 ```
 VITE_VPV_LICENSE=8ac115b7-b578-4a6b-af83-84c687aa2daf
 VITE_API_URL=http://localhost:8000
+NODE_ENV=production
 ```
 
 ## Backend Environment
